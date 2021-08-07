@@ -54,7 +54,7 @@ public enum ForwardConst {
     /*
      * 値（文字列）取得
      */
-    private String getValue() {
+    public String getValue() {
         return this.text;
     }
 
