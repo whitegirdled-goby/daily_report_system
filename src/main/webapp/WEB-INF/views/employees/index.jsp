@@ -52,7 +52,7 @@
                     </c:otherwise>
                 </c:choose>
             </c:forEach>
-            <p><a href="<c:url value='?action=${actEmp}&command=${commNew}' />"></a>
         </div>
+        <p><a href="<c:url value='?action=${actEmp}&command=${commNew}' />">新規従業員の登録</a></p>
     </c:param>
 </c:import>
