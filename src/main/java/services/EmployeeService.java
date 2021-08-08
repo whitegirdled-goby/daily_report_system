@@ -189,7 +189,7 @@ public class EmployeeService extends ServiceBase {
     /**
      * 社員番号とパスワードを条件に検索し、データが取得できるかどうかで認証結果を返却する
      *
-     * @return 認証結果を返却す(成功:true 失敗:false)
+     * @return 認証結果を返却する(成功:true 失敗:false)
      */
     public Boolean validateLogin(String code, String plainPass, String pepper) {
 
@@ -199,12 +199,12 @@ public class EmployeeService extends ServiceBase {
 
             if (ev != null && ev.getId() != null) {
 
-                //データが取得できた場合、認証成功
+                // データが取得できた場合、認証成功
                 isValidEmployee = true;
             }
         }
 
-        //認証結果を返却する
+        // 認証結果を返却する
         return isValidEmployee;
     }
 
