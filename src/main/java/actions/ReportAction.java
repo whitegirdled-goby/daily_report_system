@@ -6,10 +6,12 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
+import actions.views.EmployeeView;
 import actions.views.ReportView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
+import constants.MessageConst;
 import services.ReportService;
 
 public class ReportAction extends ActionBase {
@@ -67,5 +69,58 @@ public class ReportAction extends ActionBase {
 
         // 新規登録画面を表示
         forward(ForwardConst.FW_REP_NEW);
+    }
+
+    /*
+     * 新規登録を行う
+     */
+    public void create() throws ServletException, IOException {
+        // tokenのチェック
+        if (checkToken()) {
+            // 日報の日付が入力されていなければ今日の日付を補完
+            LocalDate day = null;
+            if ((getRequestParam(AttributeConst.REP_DATE) == null)
+                    || (getRequestParam(AttributeConst.REP_DATE).equals(""))) {
+                day = LocalDate.now();
+            } else {
+                day = LocalDate.parse(getRequestParam(AttributeConst.REP_DATE));
+            }
+
+            // ログイン情報を取得
+            EmployeeView ev = (EmployeeView)getSessionScope(AttributeConst.LOGIN_EMP);
+
+            // パラメータの値をもとに日報のインスタンスを作成
+            ReportView rv = new ReportView(
+                    null,
+                    ev,
+                    day,
+                    getRequestParam(AttributeConst.REP_TITLE),
+                    getRequestParam(AttributeConst.REP_CONTENT),
+                    null,
+                    null
+                    );
+
+            // 日報情報登録
+            List<String> errors = service.create(rv);
+
+            if (errors.size() > 0) {
+                // エラーの場合
+                putRequestScope(AttributeConst.TOKEN, getTokenId());
+                putRequestScope(AttributeConst.REPORT, rv);
+                putRequestScope(AttributeConst.ERR, errors);
+
+                // 新規登録画面を再表示
+                forward(ForwardConst.FW_REP_NEW);
+
+            } else {
+                // エラーがなかった場合
+
+                // 登録完了のメッセージをセッションに設定
+                putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
+
+                // 一覧画面にリダイレクト
+                redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
+            }
+        }
     }
 }
