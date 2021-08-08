@@ -52,6 +52,7 @@ table {
 }
 
 th {
+    font-weight: bold;
     width: 30%;
     padding: 10px 2%;
 }
