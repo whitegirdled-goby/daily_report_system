@@ -41,7 +41,7 @@ public enum AttributeConst {
     DEL_FLAG_FALSE(0),
 
     // 日報管理
-    ERPORT("report"),
+    REPORT("report"),
     REPORTS("reports"),
     REP_COUNT("reports_count"),
     REP_ID("id"),
