@@ -13,6 +13,9 @@ import constants.MessageConst;
 import constants.PropertyConst;
 import services.EmployeeService;
 
+/*
+ * 従業員に関わる処理を行うActionクラス
+ */
 public class EmployeeAction extends ActionBase {
 
     private EmployeeService service;
