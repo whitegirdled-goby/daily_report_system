@@ -34,13 +34,13 @@ public class EmployeeValidator {
         // 氏名のチェック
         String nameError = validateName(service, ev.getName());
         if (!nameError.equals("")) {
-            errors.add(codeError);
+            errors.add(nameError);
         }
 
         // パスワードのチェック
         String passError = validatePassword(service, ev.getPassword(), passwordCheckFlag);
         if (!passError.equals("")) {
-            errors.add(codeError);
+            errors.add(passError);
         }
 
         return errors;

@@ -9,6 +9,8 @@ import actions.views.EmployeeView;
 import constants.AttributeConst;
 import constants.ForwardConst;
 import constants.JpaConst;
+import constants.MessageConst;
+import constants.PropertyConst;
 import services.EmployeeService;
 
 public class EmployeeAction extends ActionBase {
@@ -60,5 +62,48 @@ public class EmployeeAction extends ActionBase {
 
         // 新規登録画面に遷移
         forward(ForwardConst.FW_EMP_NEW);
+    }
+
+    /*
+     * 新規登録を行う
+     */
+    public void create() throws ServletException, IOException {
+        // CSRF対策tokenのチェック
+        if (checkToken()) {
+            // パラメータの値を元に従業員情報のインスタンスを作成
+            EmployeeView ev = new EmployeeView(
+                    null,
+                    getRequestParam(AttributeConst.EMP_CODE),
+                    getRequestParam(AttributeConst.EMP_NAME),
+                    getRequestParam(AttributeConst.EMP_PASS),
+                    toNumber(getRequestParam(AttributeConst.EMP_ADMIN_FLG)),
+                    null,
+                    null,
+                    AttributeConst.DEL_FLAG_FALSE.getIntegerValue()
+                    );
+
+            // アプリケーションスコープからpepper文字列を取得
+            String pepper = getContextScope(PropertyConst.PEPPER);
+
+            // 従業員情報登録
+            List<String> errors = service.create(ev, pepper);
+
+            if (errors.size() > 0) {
+                // エラーがあった場合
+                putRequestScope(AttributeConst.TOKEN, getTokenId());
+                putRequestScope(AttributeConst.EMPLOYEE, ev);
+                putRequestScope(AttributeConst.ERR, errors);
+
+                // 新規登録画面を表示
+                forward(ForwardConst.FW_EMP_NEW);
+
+            } else {
+                // エラーがなかった場合、登録完了のメッセージを表示する
+                putSessionScope(AttributeConst.FLUSH, MessageConst.I_REGISTERED.getMessage());
+
+                // 一覧画面にリダイレクト
+                redirect(ForwardConst.ACT_EMP, ForwardConst.CMD_INDEX);
+            }
+        }
     }
 }
