@@ -40,7 +40,7 @@ public interface JpaConst {
     String REP_COL_TITLE = "title"; // 日報のタイトル
     String REP_COL_CONTENT = "content"; // 日報の内容
     String REP_COL_CREATED_AT = "created_at"; // 登録日時
-    String REP_COL_UPDATE_AT = "updated_at"; // 更新日時
+    String REP_COL_UPDATED_AT = "updated_at"; // 更新日時
 
     // Entity名
     String ENTITY_EMP = "employee"; // 従業員
