@@ -144,6 +144,7 @@ public class EmployeeAction extends ActionBase {
 
         // リクエストスコープにTOKENと従業員データを設定
         putRequestScope(AttributeConst.TOKEN, getTokenId());
+        ev.setPassword("");
         putRequestScope(AttributeConst.EMPLOYEE, ev);
 
         // 編集画面を表示
@@ -191,6 +192,24 @@ public class EmployeeAction extends ActionBase {
                 // 一覧画面にリダイレクト
                 redirect(ForwardConst.ACT_EMP, ForwardConst.CMD_INDEX);
             }
+        }
+    }
+
+    /*
+     * 論理削除を行う
+     */
+    public void destroy() throws ServletException, IOException {
+
+        // tokenのチェック
+        if (checkToken()) {
+            // idを条件に従業員データを論理削除
+            service.destroy(toNumber(getRequestParam(AttributeConst.EMP_ID)));
+
+            // セッションに削除完了のフラッシュメッセージを設定
+            putRequestScope(AttributeConst.FLUSH, MessageConst.I_DELETED.getMessage());
+
+            // 一覧画面にリダイレクト
+            redirect(ForwardConst.ACT_EMP, ForwardConst.CMD_INDEX);
         }
     }
 }
