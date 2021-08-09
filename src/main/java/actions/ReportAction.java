@@ -151,12 +151,12 @@ public class ReportAction extends ActionBase {
 
         // idを条件に日報データを取得する
         ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
-        
+
         // セッションからログイン中の従業員情報を取得する
         EmployeeView ev = (EmployeeView)getSessionScope(AttributeConst.LOGIN_EMP);
 
         if ((rv == null) || (ev.getId() != rv.getEmployee().getId())) {
-            
+
             // ログイン中の従業員の日報データが存在しない場合、エラー画面を表示
             forward(ForwardConst.FW_ERR_UNKNOWN);
 
@@ -166,6 +166,46 @@ public class ReportAction extends ActionBase {
 
             // 編集画面を表示
             forward(ForwardConst.FW_REP_EDIT);
+        }
+    }
+
+    /*
+     * 更新を行う
+     */
+    public void update() throws ServletException, IOException {
+
+        // tokenのチェック
+        if (checkToken()) {
+
+            // パラメータの値をもとに日報データを取得
+            ReportView rv = service.findOne(toNumber(getRequestParam(AttributeConst.REP_ID)));
+
+            // 入力された日報内容を設定する
+            rv.setReportDate(toLocalDate(getRequestParam(AttributeConst.REP_DATE)));
+            rv.setTitle(getRequestParam(AttributeConst.REP_TITLE));
+            rv.setContent(getRequestParam(AttributeConst.REP_CONTENT));
+
+            // 日報データを更新する
+            List<String> errors = service.update(rv);
+
+            if (errors.size() > 0) {
+                // エラーの場合
+                putRequestScope(AttributeConst.TOKEN, getTokenId());
+                putRequestScope(AttributeConst.REPORT, rv);
+                putRequestScope(AttributeConst.ERR, errors);
+
+                // 編集画面を再表示
+                forward(ForwardConst.FW_REP_EDIT);
+
+            } else {
+                // エラーがなかった場合
+
+                // 登録完了のメッセージをセッションに設定
+                putSessionScope(AttributeConst.FLUSH, MessageConst.I_UPDATED.getMessage());
+
+                // 一覧画面にリダイレクト
+                redirect(ForwardConst.ACT_REP, ForwardConst.CMD_INDEX);
+            }
         }
     }
 }
